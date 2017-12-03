@@ -1,0 +1,41 @@
+{
+  "name": "ticker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "engines": {
+    "node": ">=4"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "start": "node .",
+    "start-dev": "babel-watch index.js",
+    "posttest": "npm run lint && nsp check"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.26.0",
+    "bluebird": "^3.5.1",
+    "coinmarketcap": "^0.2.0",
+    "cryptocompare": "^0.3.0",
+    "dotenv": "^4.0.0",
+    "influx": "^5.0.7",
+    "lodash": "^4.17.4",
+    "node-fetch": "^1.7.3"
+  },
+  "devDependencies": {
+    "async": "^2.6.0",
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-watch": "^2.0.7",
+    "eslint": "^3.17.1",
+    "nsp": "^2.1.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-2": "^6.24.1"
+  },
+  "repository": {
+    "type": "",
+    "url": ""
+  },
+  "license": "UNLICENSED",
+  "description": "Price data for tokens"
+}
