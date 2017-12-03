@@ -9,7 +9,9 @@
     "lint": "eslint .",
     "start": "node .",
     "start-dev": "babel-watch index.js",
-    "posttest": "npm run lint && nsp check"
+    "posttest": "npm run lint && nsp check",
+    "realtime": "babel-node realtime.js",
+    "historical": "babel-node historical.js"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
