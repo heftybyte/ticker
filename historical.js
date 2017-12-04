@@ -10,9 +10,33 @@ const Promise = require('bluebird');
 import { Precision } from 'influx';
 import db from './lib/db';
 
-const storeHistoricalPrice = async({fsym, tsym}) => {
+const periodMeasurements = {
+	'day': 'historical_prices',
+	'minute': 'historical_prices_minute',
+	'hour': 'historical_prices_hour'
+};
+
+const histFn = {
+	'day': cc.histoDay,
+	'minute': cc.histoMinute,
+	'hour': cc.histoHour
+};
+
+const periodInterval = {
+	'day': 3600 * 24 * 1000,
+	'minute': 60 * 1000 * 5,
+	'hour': 3600 * 1000
+};
+
+const periodTsyms = {
+	'day': TSYMS,
+	'minute': ['USD'],
+	'hour': ['USD']
+};
+
+const storeHistoricalPrice = async({fsym, tsym, period='day'}) => {
 	let err;
-	const prices = await cc.histoDay(fsym, tsym, { limit: 2000 }).catch(e=>err=e);
+	const prices = await histFn[period](fsym, tsym, { limit: 2000 }).catch(e=>err=e);
 
 	if (err) {
 		console.error(`storeHistoricalPrice:: ${fsym}->${tsym} an error occurred`, err)
@@ -20,7 +44,7 @@ const storeHistoricalPrice = async({fsym, tsym}) => {
 	}
 
 	const points = prices.map(price=>({
-		measurement: 'historical_prices',
+		measurement: periodMeasurements[period],
 		tags: { fsym, tsym },
 		fields: {
 			open: price.open,
@@ -44,13 +68,15 @@ const storeHistoricalPrice = async({fsym, tsym}) => {
 	}
 }
 
-const storeHistoricalPrices = async () =>{
+const storeHistoricalPrices = async (period='day') =>{
 	const pairs = [];
-	for (let i = 0; i < TSYMS.length; i++) {
+	const tsyms = periodTsyms[period];
+	for (let i = 0; i < tsyms.length; i++) {
 		for (let j = 0; j < FSYMS.length; j++) {
 			pairs.push({
 				fsym: FSYMS[j],
-				tsym: TSYMS[i]
+				tsym: tsyms[i],
+				period
 			});
 		}
 	}
@@ -62,5 +88,12 @@ const storeHistoricalPrices = async () =>{
 		console.log('finished', results.length);
 	}
 }
+const period = process.argv[2] || 'day';
+const interval = periodInterval[period];
 
-storeHistoricalPrices();
+console.log({period, interval});
+
+setInterval(()=>{
+	storeHistoricalPrices(period);
+}, interval);
+storeHistoricalPrices(period);
