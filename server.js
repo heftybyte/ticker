@@ -17,9 +17,8 @@ app.get('/prices/now', async (req, res)=>{
 });
 
 app.get('/price/histday', async (req, res)=>{
-	let { fsym, tsyms, start, end } = req.query;
-	tsyms = tsyms.split(',');
-	const price = await histDay(fsym, tsyms, start, end);
+	let { fsym, tsym, start, end } = req.query;
+	const price = await histDay(fsym, tsym, start, end);
 	res.send(price);
 });
 

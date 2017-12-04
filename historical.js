@@ -7,6 +7,7 @@ const TOKENS = require('./data/tokens');
 const FSYMS = Object.keys(TOKENS);
 const Promise = require('bluebird');
 
+import { Precision } from 'influx';
 import db from './lib/db';
 
 const storeHistoricalPrice = async({fsym, tsym}) => {
@@ -32,7 +33,7 @@ const storeHistoricalPrice = async({fsym, tsym}) => {
 
 	console.log(`saving ${points.length} historical price points for ${fsym}->${tsym}`);
 
-	await db.writePoints(points).catch(e=>err=e);
+	await db.writePoints(points, { precision: Precision.Seconds }).catch(e=>err=e);
 
 	if (err) {
 		console.error('an error occured', err);

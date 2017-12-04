@@ -1,3 +1,4 @@
+import { Precision } from 'influx';
 import {setInterval} from 'timers';
 import {getPrices} from './lib/prices';
 import db from './lib/db';
@@ -26,7 +27,7 @@ const storeCurrentPrices = async () => {
 	console.log(`saving ${points.length} price points`);
 
 	let err;
-	await db.writePoints(points).catch(e=>err=e);
+	await db.writePoints(points, { precision: Precision.Seconds }).catch(e=>err=e);
 
 	if (err) {
 		console.error('an error occured', err);
