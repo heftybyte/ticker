@@ -1,19 +1,23 @@
-const Influx = require('influx');
+import { escape, Precision } from 'influx';
 import influx from '../lib/db';
 
 export const now = async (fsym, tsym) => {
 	const query = `
 		select * from ticker_prices
-		where fsym = ${Influx.escape.stringLit(fsym)} and tsym = ${Influx.escape.stringLit(tsym)}
+		where fsym = ${escape.stringLit(fsym)} and tsym = ${escape.stringLit(tsym)}
 		order by time desc
 		limit 1
 	`;
 	let err;
-	const rows = await influx.query(query).catch(e=>err=e);
+	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
 	if (err) {
 		throw err;
 	}
-	return rows[0];
+	return {
+		[fsym]: {
+			[tsym]: rows[0]
+		}
+	};
 }
 
 export const nowMulti = async (fsyms, tsyms) => {
@@ -26,7 +30,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 		limit 1
 	`;
 	let err;
-	const rows = await influx.query(query).catch(e=>err=e);
+	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
 	if (err) {
 		throw err;
 	}
@@ -40,16 +44,20 @@ export const nowMulti = async (fsyms, tsyms) => {
 	return map;
 }
 
-export const histDay = async (fsym, tsyms) => {
+export const histDay = async (fsym, tsym, start=0, end) => {
+	start = new Date(Number(start));
+	end = end ? new Date(Number(end)) : new Date();
 	const query = `
 		select * from historical_prices
-		where fsym = ${Influx.escape.stringLit(fsym)}
-		and tsym =~ /${tsyms.join('|')}/
+		where fsym = ${escape.stringLit(fsym)}
+		and tsym = ${escape.stringLit(tsym)}
 		and high > 0
+		and time >= ${escape.stringLit(start.toISOString())}
+		and time <= ${escape.stringLit(end.toISOString())}
 		order by time desc
 	`;
 	let err;
-	const rows = await influx.query(query).catch(e=>err=e);
+	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
 	if (err) {
 		throw err;
 	}
@@ -65,16 +73,20 @@ export const histDay = async (fsym, tsyms) => {
 	return map;
 }
 
-export const histDayMulti = async (fsyms, tsyms) => {
+export const histDayMulti = async (fsyms, tsyms, start=0, end) => {
+	start = new Date(Number(start));
+	end = end ? new Date(Number(end)) : new Date();
 	const query = `
 		select * from historical_prices
 		where fsym =~ /${fsyms.join('|')}/
 		and tsym =~ /${tsyms.join('|')}/
 		and high > 0
+		and time >= ${escape.stringLit(start.toISOString())}
+		and time <= ${escape.stringLit(end.toISOString())}
 		order by time desc
 	`;
 	let err;
-	const rows = await influx.query(query).catch(e=>err=e);
+	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
 	if (err) {
 		throw err;
 	}
