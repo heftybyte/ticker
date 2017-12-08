@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-import { now, nowMulti, histDay, histDayMulti } from './dao/price';
+import { now, nowMulti, hist, histMulti } from './dao/price';
 
 app.get('/price/now', async (req, res)=>{
 	const { fsym, tsym } = req.query;
@@ -18,7 +18,7 @@ app.get('/prices/now', async (req, res)=>{
 
 app.get('/price/historical', async (req, res)=>{
 	let { fsym, tsym, start, end, format, period } = req.query;
-	const price = await histDay(fsym, tsym, period, start, end, format);
+	const price = await hist(fsym, tsym, period, start, end, format);
 	res.send(price);
 });
 
@@ -26,7 +26,7 @@ app.get('/prices/historical', async (req, res)=>{
 	let { fsyms, tsyms, start, end, format, period } = req.query;
 	fsyms = fsyms.split(',');
 	tsyms = tsyms.split(',');
-	const price = await histDayMulti(fsyms, tsyms, period, start, end, format);
+	const price = await histMulti(fsyms, tsyms, period, start, end, format);
 	res.send(price);
 });
 

@@ -10,11 +10,7 @@ const Promise = require('bluebird');
 import { Precision } from 'influx';
 import db from './lib/db';
 
-export const periodMeasurements = {
-	'1d': 'historical_prices',
-	'1m': 'historical_prices_minute',
-	'1h': 'historical_prices_hour'
-};
+const MEASUREMENT = 'historical_prices'
 
 export const histFn = {
 	'1d': cc.histoDay,
@@ -25,7 +21,7 @@ export const histFn = {
 export const periodInterval = {
 	'1d': 3600 * 24 * 1000,
 	'1m': 60 * 1000 * 10,
-	'1h': 3600 * 1000
+	'1h': 3600 * 1000	
 };
 
 export const periodTsyms = {
@@ -44,7 +40,7 @@ const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	}
 
 	const points = prices.map(price=>({
-		measurement: periodMeasurements[period],
+		measurement: MEASUREMENT,
 		tags: { fsym, tsym },
 		fields: {
 			open: price.open,

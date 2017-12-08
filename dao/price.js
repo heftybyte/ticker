@@ -1,11 +1,10 @@
 import { escape, Precision } from 'influx';
 import influx from '../lib/db';
 
-const formatChart = (prices) =>
-	(prices || []).map((price)=>({
-		x: price.price,
-		y: price.time
-	}))
+const formatChart = (price={}) =>({
+	x: price.close,
+	y: +(price.time)
+})
 
 export const now = async (fsym, tsym) => {
 	const query = `
@@ -50,7 +49,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 	return map;
 }
 
-export const histDay = async (fsym, tsym, period='1d', start=0, end=0, format='price') => {
+export const hist = async (fsym, tsym, period='1d', start=0, end=0, format='price') => {
 	start = new Date(Number(start));
 	end = end ? new Date(Number(end)) : new Date();
 	const query = `
@@ -74,15 +73,16 @@ export const histDay = async (fsym, tsym, period='1d', start=0, end=0, format='p
 		if (!map[fsym][row.tsym]) {
 			map[row.fsym][row.tsym] = [];
 		}
+		let price = row
 		if (format === 'chart') {
-			row = formatChart(row)
+			price = formatChart(row)
 		}
-		map[row.fsym][row.tsym].push(row)
+		map[row.fsym][row.tsym].push(price)
 	});
 	return map;
 }
 
-export const histDayMulti = async (fsyms, tsyms, period='1d', start=0, end=0, format='price') => {
+export const histMulti = async (fsyms, tsyms, period='1d', start=0, end=0, format='price') => {
 	start = new Date(Number(start));
 	end = end ? new Date(Number(end)) : new Date();
 	const query = `
@@ -107,10 +107,11 @@ export const histDayMulti = async (fsyms, tsyms, period='1d', start=0, end=0, fo
 		if (!map[row.fsym][row.tsym]) {
 			map[row.fsym][row.tsym] = [];
 		}
+		let price = row
 		if (format === 'chart') {
-			row = formatChart(row)
+			price = formatChart(row)
 		}
-		map[row.fsym][row.tsym].push(row);
+		map[row.fsym][row.tsym].push(price);
 	});
 	return map;
 }
