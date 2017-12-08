@@ -16,17 +16,17 @@ app.get('/prices/now', async (req, res)=>{
 	res.send(price);
 });
 
-app.get('/price/histday', async (req, res)=>{
-	let { fsym, tsym, start, end } = req.query;
-	const price = await histDay(fsym, tsym, start, end);
+app.get('/price/historical', async (req, res)=>{
+	let { fsym, tsym, start, end, format, period } = req.query;
+	const price = await histDay(fsym, tsym, period, start, end, format);
 	res.send(price);
 });
 
-app.get('/prices/histday', async (req, res)=>{
-	let { fsyms, tsyms, start, end } = req.query;
+app.get('/prices/historical', async (req, res)=>{
+	let { fsyms, tsyms, start, end, format, period } = req.query;
 	fsyms = fsyms.split(',');
 	tsyms = tsyms.split(',');
-	const price = await histDayMulti(fsyms, tsyms, start, end);
+	const price = await histDayMulti(fsyms, tsyms, period, start, end, format);
 	res.send(price);
 });
 

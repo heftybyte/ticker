@@ -1,6 +1,12 @@
 import { escape, Precision } from 'influx';
 import influx from '../lib/db';
 
+const formatChart = (prices) =>
+	(prices || []).map((price)=>({
+		x: price.price,
+		y: price.time
+	}))
+
 export const now = async (fsym, tsym) => {
 	const query = `
 		select * from ticker_prices
@@ -44,7 +50,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 	return map;
 }
 
-export const histDay = async (fsym, tsym, start=0, end) => {
+export const histDay = async (fsym, tsym, period='1d', start=0, end=0, format='price') => {
 	start = new Date(Number(start));
 	end = end ? new Date(Number(end)) : new Date();
 	const query = `
@@ -68,12 +74,15 @@ export const histDay = async (fsym, tsym, start=0, end) => {
 		if (!map[fsym][row.tsym]) {
 			map[row.fsym][row.tsym] = [];
 		}
-		map[row.fsym][row.tsym].push(row);
+		if (format === 'chart') {
+			row = formatChart(row)
+		}
+		map[row.fsym][row.tsym].push(row)
 	});
 	return map;
 }
 
-export const histDayMulti = async (fsyms, tsyms, start=0, end) => {
+export const histDayMulti = async (fsyms, tsyms, period='1d', start=0, end=0, format='price') => {
 	start = new Date(Number(start));
 	end = end ? new Date(Number(end)) : new Date();
 	const query = `
@@ -97,6 +106,9 @@ export const histDayMulti = async (fsyms, tsyms, start=0, end) => {
 		}
 		if (!map[row.fsym][row.tsym]) {
 			map[row.fsym][row.tsym] = [];
+		}
+		if (format === 'chart') {
+			row = formatChart(row)
 		}
 		map[row.fsym][row.tsym].push(row);
 	});

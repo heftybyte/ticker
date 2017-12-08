@@ -10,31 +10,31 @@ const Promise = require('bluebird');
 import { Precision } from 'influx';
 import db from './lib/db';
 
-const periodMeasurements = {
-	'day': 'historical_prices',
-	'minute': 'historical_prices_minute',
-	'hour': 'historical_prices_hour'
+export const periodMeasurements = {
+	'1d': 'historical_prices',
+	'1m': 'historical_prices_minute',
+	'1h': 'historical_prices_hour'
 };
 
-const histFn = {
-	'day': cc.histoDay,
-	'minute': cc.histoMinute,
-	'hour': cc.histoHour
+export const histFn = {
+	'1d': cc.histoDay,
+	'1m': cc.histoMinute,
+	'1h': cc.histoHour
 };
 
-const periodInterval = {
-	'day': 3600 * 24 * 1000,
-	'minute': 60 * 1000 * 5,
-	'hour': 3600 * 1000
+export const periodInterval = {
+	'1d': 3600 * 24 * 1000,
+	'1m': 60 * 1000 * 10,
+	'1h': 3600 * 1000
 };
 
-const periodTsyms = {
-	'day': TSYMS,
-	'minute': ['USD'],
-	'hour': ['USD']
+export const periodTsyms = {
+	'1d': TSYMS,
+	'1m': ['USD'],
+	'1h': ['USD']
 };
 
-const storeHistoricalPrice = async({fsym, tsym, period='day'}) => {
+const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	let err;
 	const prices = await histFn[period](fsym, tsym, { limit: 2000 }).catch(e=>err=e);
 
@@ -68,7 +68,7 @@ const storeHistoricalPrice = async({fsym, tsym, period='day'}) => {
 	}
 }
 
-const storeHistoricalPrices = async (period='day') =>{
+const storeHistoricalPrices = async (period='1d') =>{
 	const pairs = [];
 	const tsyms = periodTsyms[period];
 	for (let i = 0; i < tsyms.length; i++) {
@@ -88,7 +88,7 @@ const storeHistoricalPrices = async (period='day') =>{
 		console.log('finished', results.length);
 	}
 }
-const period = process.argv[2] || 'day';
+const period = process.argv[2] || '1d';
 const interval = periodInterval[period];
 
 console.log({period, interval});
