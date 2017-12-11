@@ -39,7 +39,7 @@ const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 		return false;
 	}
 
-	const points = prices.map(price=>({
+	const points = prices.filter(p=>p.close).map(price=>({
 		measurement: MEASUREMENT,
 		tags: { fsym, tsym },
 		fields: {
@@ -64,13 +64,12 @@ const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	}
 }
 
-const storeHistoricalPrices = async (period='1d') =>{
+const storeHistoricalPrices = async (period='1d', fsyms=FSYMS, tsyms=TSYMS) =>{
 	const pairs = [];
-	const tsyms = periodTsyms[period];
 	for (let i = 0; i < tsyms.length; i++) {
-		for (let j = 0; j < FSYMS.length; j++) {
+		for (let j = 0; j < fsyms.length; j++) {
 			pairs.push({
-				fsym: FSYMS[j],
+				fsym: fsyms[j],
 				tsym: tsyms[i],
 				period
 			});
@@ -85,11 +84,13 @@ const storeHistoricalPrices = async (period='1d') =>{
 	}
 }
 const period = process.argv[2] || '1d';
+const fsyms = process.argv[3] ? process.argv[3].split(',') : FSYMS;
+const tsyms = process.argv[4] ? process.argv[4].split(',') : periodTsyms[period];
 const interval = periodInterval[period];
 
-console.log({period, interval});
+console.log('fetching historical price data for', {period, interval, fsyms, tsyms});
 
 setInterval(()=>{
-	storeHistoricalPrices(period);
+	storeHistoricalPrices(period, fsyms, tsyms);
 }, interval);
-storeHistoricalPrices(period);
+storeHistoricalPrices(period, fsyms, tsyms);
