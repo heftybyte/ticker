@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "start": "node .",
     "start-debug": "nodemon debug server.js --exec babel-node",
+    "build": "babel . -d dist --ignore node_modules --copy-files",
     "start-dev": "babel-watch server.js",
     "posttest": "npm run lint && nsp check",
     "realtime": "babel-node realtime.js",
