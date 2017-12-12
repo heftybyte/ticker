@@ -12,7 +12,9 @@
 *.xml
 .DS_Store
 .idea
+.env
 .project
 coverage
 node_modules
 npm-debug.log
+yarn.lock

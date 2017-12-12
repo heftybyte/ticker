@@ -1,3 +1,4 @@
+require("dotenv").config()
 const express = require('express');
 const app = express();
 import { now, nowMulti, hist, histMulti } from './dao/price';
@@ -30,6 +31,6 @@ app.get('/prices/historical', async (req, res)=>{
 	res.send(price);
 });
 
-app.listen(3003, ()=>{
-	console.log('listening on 3003');
+app.listen(process.env.PORT, ()=>{
+	console.log(`listening on ${process.env.PORT}`);
 })

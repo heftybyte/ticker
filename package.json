@@ -12,8 +12,10 @@
     "build": "babel . -d dist --ignore node_modules --copy-files",
     "start-dev": "babel-watch server.js",
     "posttest": "npm run lint && nsp check",
-    "realtime": "babel-node realtime.js",
-    "historical": "babel-node historical.js"
+    "realtime": "node realtime.js",
+    "historical": "node historical.js",
+    "realtime-dev": "babel-node realtime.js",
+    "historical-dev": "babel-node historical.js"
   },
   "dependencies": {
     "babel-runtime": "^6.26.0",
