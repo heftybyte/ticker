@@ -5,7 +5,7 @@ npm run build
 echo "---- cd dist ----"
 cd dist/
 # echo " --- copy env --"
-# cp /var/www/tokens-express/env/.env /var/www/tokens-express/current/dist/
+cp /home/ubuntu/env/.env /home/ubuntu/ticker/dist/
 echo "--- pm2 restart -----"
 pm2 startOrRestart deploy/ecosystem.config.js -i 4 --update-env
 

@@ -8,6 +8,7 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
+    "test": "",
     "coin": "babel-node lib/prices.js",
     "start-debug": "nodemon debug server.js --exec babel-node",
     "build": "babel . -d dist --ignore node_modules --copy-files",
