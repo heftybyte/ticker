@@ -6,8 +6,8 @@ module.exports = {
   apps : [
     // First application
     {
-      name      : 'Tokens Express',
-      script    : 'server/server.js',
+      name      : 'Ticker',
+      script    : 'server.js',
     },
   ],
 
