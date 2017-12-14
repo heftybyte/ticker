@@ -6,8 +6,8 @@ module.exports = {
   apps : [
     // First application
     {
-      name      : 'Tokens Express',
-      script    : 'server/server.js',
+      name      : 'Ticker',
+      script    : 'server.js',
     },
   ],
 
@@ -22,7 +22,7 @@ module.exports = {
       ref  : 'origin/master',
       repo : 'git@github.com:heftybyte/ticker.git',
       "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
-      path : '/var/www/ticker/',
+      path : '/home/ubuntu/ticker/',
       'post-deploy' : 'sh deploy/deploy.sh'
     },
   }
