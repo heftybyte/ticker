@@ -8,7 +8,6 @@
   "scripts": {
     "lint": "eslint .",
     "start": "node .",
-    "coin": "babel-node lib/prices.js",
     "start-debug": "nodemon debug server.js --exec babel-node",
     "build": "babel . -d dist --ignore node_modules --copy-files",
     "start-dev": "babel-watch server.js",
@@ -22,18 +21,13 @@
     "babel-core": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
-    "btoa": "^1.1.2",
     "coinmarketcap": "^0.2.0",
     "cryptocompare": "^0.3.0",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "global": "^4.3.2",
     "influx": "^5.0.7",
     "lodash": "^4.17.4",
-    "node-fetch": "^1.7.3",
-    "query-string": "^5.0.1",
-    "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "node-fetch": "^1.7.3"
   },
   "devDependencies": {
     "async": "^2.6.0",

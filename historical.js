@@ -2,6 +2,8 @@
 global.fetch = require('node-fetch');
 
 const cc = require('cryptocompare');
+const proxy_cc = require('./lib/cryptocompare');
+
 const TSYMS = require('./data/tsyms');
 const TOKENS = require('./data/tokens');
 const FSYMS = Object.keys(TOKENS);
@@ -13,9 +15,9 @@ import db from './lib/db';
 const MEASUREMENT = 'historical_prices'
 
 export const histFn = {
-	'1d': cc.histoDay,
-	'1m': cc.histoMinute,
-	'1h': cc.histoHour
+	'1d': proxy_cc.histoDay,
+	'1m': proxy_cc.histoMinute,
+	'1h': proxy_cc.histoHour
 };
 
 export const periodInterval = {
@@ -33,6 +35,7 @@ export const periodTsyms = {
 const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	let err;
 	const prices = await histFn[period](fsym, tsym, { limit: 2000 }).catch(e=>err=e);
+	// process.exit(0)
 
 	if (err) {
 		console.error(`storeHistoricalPrice:: ${fsym}->${tsym} an error occurred`, err)
@@ -89,7 +92,7 @@ const interval = periodInterval[period];
 
 console.log({period, interval});
 
-setInterval(()=>{
-	storeHistoricalPrices(period);
-}, interval);
+// setInterval(()=>{
+// 	storeHistoricalPrices(period);
+// }, interval);
 storeHistoricalPrices(period);
