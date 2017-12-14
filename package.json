@@ -13,7 +13,7 @@
     "start-debug": "nodemon debug server.js --exec babel-node",
     "build": "babel . -d dist --ignore node_modules --copy-files",
     "start-dev": "babel-watch server.js",
-    "posttest": "npm run lint && nsp check",
+    "posttest": "nsp check",
     "realtime": "node realtime.js",
     "historical": "node historical.js",
     "realtime-dev": "babel-node realtime.js",
