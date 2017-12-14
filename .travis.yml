@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "8"
+install:
+  - npm install -g pm2
+deploy:
+  provider: script
+  script: pm2 deploy deploy/ecosystem.config.js production
+  on:
+    branch: master
+notifications:
+    slack: heftybyte:MfzjodikjxZSS1Vbqyg8inIv
