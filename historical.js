@@ -92,7 +92,7 @@ const interval = periodInterval[period];
 
 console.log({period, interval});
 
-// setInterval(()=>{
-// 	storeHistoricalPrices(period);
-// }, interval);
+setInterval(()=>{
+	storeHistoricalPrices(period);
+}, interval);
 storeHistoricalPrices(period);
