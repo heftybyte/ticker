@@ -6,8 +6,8 @@ module.exports = {
   apps : [
     // First application
     {
-      name      : 'Ticker',
-      script    : 'server.js',
+      name      : 'TickerSetup',
+      script    : 'current/server.js',
     },
   ],
   /**

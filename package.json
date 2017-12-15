@@ -11,7 +11,7 @@
     "test": "",
     "coin": "babel-node lib/prices.js",
     "start-debug": "nodemon debug server.js --exec babel-node",
-    "build": "babel . -d dist --ignore node_modules current dist --copy-files",
+    "build": "babel . -d dist --ignore node_modules current dist old_dist --copy-files",
     "start-dev": "babel-watch server.js",
     "posttest": "nsp check",
     "realtime": "node realtime.js",
