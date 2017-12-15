@@ -31,6 +31,7 @@ app.get('/prices/historical', async (req, res)=>{
 	res.send(price);
 });
 
-app.listen(process.env.PORT, ()=>{
+const port = process.env.PORT || 3003;
+app.listen(port, ()=>{
 	console.log(`listening on ${process.env.PORT}`);
 })
