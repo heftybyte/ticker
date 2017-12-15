@@ -1,0 +1,1 @@
+/Users/Samparsky/Sites/nodejs/ticker/test1/name.txt
