@@ -20,7 +20,6 @@ module.exports = {
       user : 'ubuntu',
       host : '52.89.161.39',
       ref  : 'origin/master',
-      "key"  : "/Users/Samparsky/Sites/hbyte/server/parity-server.pem", // path to the private key to authenticate
       repo : 'git@github.com:heftybyte/ticker.git',
       "ssh_options": ["StrictHostKeyChecking=no", "PasswordAuthentication=no"],
       path : '/home/ubuntu/ticker/',
