@@ -5,6 +5,7 @@ install:
   - npm install -g pm2 nsp
 deploy:
   provider: script
+  skip_cleanup: true
   script:
     - pm2 deploy deploy/ecosystem.config.js production
   on:
