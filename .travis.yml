@@ -5,7 +5,8 @@ install:
   - npm install -g pm2 nsp
 deploy:
   provider: script
-  script: pm2 deploy deploy/ecosystem.config.js production
+  script:
+    - pm2 deploy deploy/ecosystem.config.js production
   on:
     branch: master
 notifications:
