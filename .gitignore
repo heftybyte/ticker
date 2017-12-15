@@ -19,3 +19,4 @@ node_modules
 npm-debug.log
 yarn.lock
 dist/
+historical-1d.log
