@@ -6,7 +6,6 @@ install:
 deploy:
   provider: script
   script:
-    - pm2 deploy deploy/ecosystem.config.js setup
     - pm2 deploy deploy/ecosystem.config.js production
   on:
     branch: master
