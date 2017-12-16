@@ -1,5 +1,5 @@
 // required by cryptocompare
-require("dotenv").config()
+import {} from 'dotenv/config'
 
 global.fetch = require('node-fetch');
 
