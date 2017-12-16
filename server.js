@@ -1,4 +1,4 @@
-require("dotenv").config()
+import {} from 'dotenv/config'
 const express = require('express');
 const app = express();
 import { now, nowMulti, hist, histMulti } from './dao/price';
