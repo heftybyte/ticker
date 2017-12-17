@@ -1,3 +1,4 @@
+import {} from 'dotenv/config'
 import { Precision } from 'influx';
 import {setInterval} from 'timers';
 import {getPrices} from './lib/prices';
