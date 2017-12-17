@@ -23,9 +23,9 @@ export const histFn = {
 };
 
 export const periodInterval = {
-	'1d': 3600 * 24 * 1000,
-	'1m': 60 * 1000 * 10,
-	'1h': 3600 * 1000	
+	'1d': 3600 * 12 * 1000,
+	'1m': 60 * 1000 * 5,
+	'1h': 1800 * 1000	
 };
 
 export const periodTsyms = {

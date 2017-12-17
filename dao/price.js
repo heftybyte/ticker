@@ -10,7 +10,7 @@ export const now = async (fsym, tsym) => {
 	const query = `
 		select * from ticker_prices
 		where fsym = ${escape.stringLit(fsym)} and tsym = ${escape.stringLit(tsym)}
-		order by time asc
+		order by time desc
 		limit 1
 	`;
 	let err;
@@ -28,12 +28,13 @@ export const now = async (fsym, tsym) => {
 export const nowMulti = async (fsyms, tsyms) => {
 	const query = `
 		select * from ticker_prices
-		where fsym =~ /${fsyms.join('|')}/
-		and tsym =~ /${tsyms.join('|')}/
+		where fsym =~ /^${fsyms.join('$|^')}$/
+		and tsym =~ /^${tsyms.join('$|^')}$/
 		group by fsym,tsym
-		order by time asc
+		order by time desc
 		limit 1
 	`;
+	console.log(query)
 	let err;
 	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
 	if (err) {
@@ -52,7 +53,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 const periodInterval = {
 	'1d': '5m',
 	'1w': '10m',
-	'1m': '1h',
+	'1m': '1d',
 	'3m': '1d',
 	'1y': '1d',
 	'all': '1d'
@@ -122,8 +123,8 @@ export const histMulti = async ({fsyms, tsyms, period, interval, start=0, end=0,
 		`
 	const query = `
 		select LAST(fsym) as fsym, LAST(tsym) as tsym, LAST(close) as close, LAST(high) as high, LAST(low) as low, LAST(open) as open from historical_prices
-		where fsym =~ /${fsyms.join('|')}/
-		and tsym =~ /${tsyms.join('|')}/
+		where fsym =~ /^${fsyms.join('$|^')}$/
+		and tsym =~ /^${tsyms.join('$|^')}$/
 		${timeQuery}
 		group by fsym, tsym, time(${interval})
 		order by time asc
