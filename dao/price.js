@@ -68,7 +68,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 	return map;
 }
 
-const recent = async (fsym, tsym, period='1d', format='raw') => {
+const recent = async ({fsym, tsym, period='1d', format='raw'}) => {
 	period = periodMap[period]
 	const interval = interval || periodInterval[period] || '1d'
 	const query = `
@@ -101,7 +101,7 @@ const recent = async (fsym, tsym, period='1d', format='raw') => {
 	return map
 }
 
-const recentMulti = async (fsyms, tsyms, period='1d', format='raw') => {
+const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 	period = periodMap[period]
 	const interval = interval || periodInterval[period] || '1d'
 	const query = `
@@ -137,7 +137,7 @@ const recentMulti = async (fsyms, tsyms, period='1d', format='raw') => {
 
 export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, format='raw'}) => {
 	if (period === '1d' || period === '1w') {
-		return await recent(fsym, tsym, period, format)
+		return await recent({fsym, tsym, period, format})
 	}
 	start = new Date(Number(start));
 	end = Number(end) ? new Date(Number(end)) : new Date();
@@ -182,7 +182,7 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 
 export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, end=0, format='raw'}) => {
 	if (period === '1d' || period === '1w') {
-		return await recentMulti(fsyms, tsyms, period, format)
+		return await recentMulti({fsyms, tsyms, period, format})
 	}
 	start = new Date(Number(start));
 	end = Number(end) ? new Date(Number(end)) : new Date();
