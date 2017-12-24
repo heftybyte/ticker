@@ -36,18 +36,27 @@ const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 		return false;
 	}
 
-	const measurement = (period === '1d' || period === '1w') ? 'ticker_prices' : 'historical_prices'
-	const points = prices.filter(p=>p.close).map(price=>({
-		measurement,
-		tags: { fsym, tsym },
-		fields: {
-			open: price.open,
-			close: price.close,
-			high: price.high,
-			low: price.low
-		},
-		timestamp: price.time
-	}));
+	const measurement = (period === '1m' || period === '1h') ? 'ticker_prices' : 'historical_prices'
+	const points = prices.filter(p=>p.close).map(price=>{
+		const fields = measurement === 'historical_prices' ? 
+			{
+				open: price.open,
+				close: price.close,
+				high: price.high,
+				low: price.low
+			}
+			:
+			{
+				price: price.close
+			}
+
+		return {
+			measurement,
+			tags: { fsym, tsym },
+			fields,
+			timestamp: price.time
+		}
+	});
 
 	console.log(`saving ${points.length} historical price points for ${fsym}->${tsym}`);
 
