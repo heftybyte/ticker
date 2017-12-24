@@ -74,7 +74,7 @@ export const hist = async ({fsym, tsym, period, interval, start=0, end=0, format
 	period = periodMap[period]
 	const timeQuery = period ?
 		period === '1d' ? 
-		`and time > ${+new Date().setHours(0,0,0)*1000}` : `and time > now() - ${period}`
+		`and time >= ${+new Date().setHours(0,0,0,0)*1000}` : `and time > now() - ${period}`
 		:
 		`
 		and time >= ${escape.stringLit(start.toISOString())}
@@ -115,7 +115,7 @@ export const histMulti = async ({fsyms, tsyms, period, interval, start=0, end=0,
 	period = periodMap[period]
 	const timeQuery = period ?
 		period === '1d' ? 
-		`and time > ${+new Date().setHours(0,0,0)*1000}` : `and time > now() - ${period}`
+		`and time >= ${+new Date().setHours(0,0,0,0)*1000}` : `and time > now() - ${period}`
 		:
 		`
 		and time >= ${escape.stringLit(start.toISOString())}
