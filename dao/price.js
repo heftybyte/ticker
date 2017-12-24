@@ -68,7 +68,7 @@ export const nowMulti = async (fsyms, tsyms) => {
 	return map;
 }
 
-const recent = async (fsym, tsym, period='1d') => {
+const recent = async (fsym, tsym, period='1d', format='raw') => {
 	period = periodMap[period]
 	const interval = interval || periodInterval[period] || '1d'
 	const query = `
@@ -85,14 +85,23 @@ const recent = async (fsym, tsym, period='1d') => {
 	if (err) {
 		throw err;
 	}
-	return {
+	const map = {
 		[fsym]: {
-			[tsym]: rows
+			[tsym]: []
 		}
 	};
+
+	rows.forEach((row)=>{
+		let price = row
+		if (format === 'chart') {
+			price = formatChart(row)
+		}
+		map[fsym][tsym].push(price)
+	})
+	return map
 }
 
-const recentMulti = async (fsyms, tsyms, period='1d') => {
+const recentMulti = async (fsyms, tsyms, period='1d', format='raw') => {
 	period = periodMap[period]
 	const interval = interval || periodInterval[period] || '1d'
 	const query = `
@@ -117,14 +126,18 @@ const recentMulti = async (fsyms, tsyms, period='1d') => {
 		})
 	})
 	rows.forEach((row)=>{
-		map[row.fsym][row.tsym].push(row)
+		let price = row
+		if (format === 'chart') {
+			price = formatChart(row)
+		}
+		map[row.fsym][row.tsym].push(price)
 	});
 	return map;
 }
 
 export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, format='raw'}) => {
 	if (period === '1d' || period === '1w') {
-		return await recent(fsym, tsym, period)
+		return await recent(fsym, tsym, period, format)
 	}
 	start = new Date(Number(start));
 	end = Number(end) ? new Date(Number(end)) : new Date();
@@ -169,7 +182,7 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 
 export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, end=0, format='raw'}) => {
 	if (period === '1d' || period === '1w') {
-		return await recentMulti(fsyms, tsyms, period)
+		return await recentMulti(fsyms, tsyms, period, format)
 	}
 	start = new Date(Number(start));
 	end = Number(end) ? new Date(Number(end)) : new Date();
