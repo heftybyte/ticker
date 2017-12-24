@@ -26,15 +26,9 @@ export const periodInterval = {
 	'1h': 1800 * 1000	
 };
 
-export const periodTsyms = {
-	'1d': TSYMS,
-	'1m': ['USD'],
-	'1h': ['USD']
-};
-
 const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	let err;
-	const prices = await histFn[period](fsym, tsym, { limit: 2000 }).catch(e=>err=e);
+	const prices = await histFn[period](fsym, tsym).catch(e=>err=e);
 	// process.exit(0)
 
 	if (err) {
@@ -89,7 +83,7 @@ const storeHistoricalPrices = async (period='1d', fsyms=FSYMS, tsyms=TSYMS) =>{
 }
 const period = process.argv[2] || '1d';
 const fsyms = process.argv[3] ? process.argv[3].split(',') : FSYMS;
-const tsyms = process.argv[4] ? process.argv[4].split(',') : periodTsyms[period];
+const tsyms = process.argv[4] ? process.argv[4].split(',') : TSYMS;
 const interval = periodInterval[period];
 
 console.log('fetching historical price data for', {period, interval, fsyms, tsyms});
