@@ -14,8 +14,6 @@ const Promise = require('bluebird');
 import { Precision } from 'influx';
 import db from './lib/db';
 
-const MEASUREMENT = 'historical_prices'
-
 export const histFn = {
 	'1d': proxy_cc.histoDay,
 	'1m': proxy_cc.histoMinute,
@@ -44,8 +42,9 @@ const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 		return false;
 	}
 
+	const measurement = (period === '1d' || period === '1w') ? 'ticker_prices' : 'historical_prices'
 	const points = prices.filter(p=>p.close).map(price=>({
-		measurement: MEASUREMENT,
+		measurement,
 		tags: { fsym, tsym },
 		fields: {
 			open: price.open,
@@ -95,7 +94,7 @@ const interval = periodInterval[period];
 
 console.log('fetching historical price data for', {period, interval, fsyms, tsyms});
 
-setInterval(()=>{
-	storeHistoricalPrices(period, fsyms, tsyms);
-}, interval);
+// setInterval(()=>{
+// 	storeHistoricalPrices(period, fsyms, tsyms);
+// }, interval);
 storeHistoricalPrices(period, fsyms, tsyms);
