@@ -92,6 +92,7 @@ const recent = async ({fsym, tsym, period='1d', format='raw'}) => {
 	};
 	const firstRow = rows[0]
 	rows.forEach((row)=>{
+		if (!row.high) return
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
@@ -131,6 +132,7 @@ const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 		})
 	})
 	rows.forEach((row)=>{
+		if (!row.high) return
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
@@ -184,6 +186,7 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 	};
 	const firstRow = rows[0]
 	rows.forEach((row)=>{
+		if (!row.high) return
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
@@ -237,6 +240,7 @@ export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, e
 		})
 	})
 	rows.filter(r=>r.close).forEach((row)=>{
+		if (!row.high) return
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
