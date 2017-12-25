@@ -75,9 +75,9 @@ const recent = async ({fsym, tsym, period='1d', format='raw'}) => {
 		select LAST(volume_24_hr) as volume, LAST(change_pct_24_hr) as change, LAST(market_cap) as market_cap, MAX(price) as high, MIN(price) as low, FIRST(price) as open, LAST(price) as close from ticker_prices
 		where fsym = ${escape.stringLit(fsym)}
 		and tsym = ${escape.stringLit(tsym)}
-		and time > now() - ${period}
+		and time >= now() - ${period}
 		group by time(${interval})
-		order by time desc
+		order by time asc
 	`;
 	console.log('recent', query)
 	let err;
@@ -90,12 +90,14 @@ const recent = async ({fsym, tsym, period='1d', format='raw'}) => {
 			[tsym]: []
 		}
 	};
-
+	const firstRow = rows[0]
 	rows.forEach((row)=>{
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
 		}
+		price.change_pct = 1 - ((firstRow.close / row.close))
+		price.change_close = firstRow.close * price.change_pct
 		map[fsym][tsym].push(price)
 	})
 	return map
@@ -108,9 +110,9 @@ const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 		select LAST(volume_24_hr) as volume, LAST(change_pct_24_hr) as change, LAST(market_cap) as market_cap, MAX(price) as high, MIN(price) as low, FIRST(price) as open, LAST(price) as close from ticker_prices
 		where fsym =~ /^${fsyms.join('$|^')}$/
 		and tsym =~ /^${tsyms.join('$|^')}$/
-		and time > now() - ${period}
+		and time >= now() - ${period}
 		group by fsym, tsym, time(${interval})
-		order by time desc
+		order by time asc
 	`;
 	console.log('recentMulti', query)
 	let err;
@@ -119,10 +121,13 @@ const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 		throw err;
 	}
 	const map = {};
+	const firstRows = {}
 	fsyms.forEach((fsym)=>{
 		map[fsym] = {}
+		firstRows[fsym] = {}
 		tsyms.forEach((tsym)=>{
 			map[fsym][tsym] = []
+			firstRows[fsym][tsym] = null
 		})
 	})
 	rows.forEach((row)=>{
@@ -130,6 +135,12 @@ const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 		if (format === 'chart') {
 			price = formatChart(row)
 		}
+		if (!firstRows[row.fsym][row.tsym]) {
+			firstRows[row.fsym][row.tsym] = row
+		}
+		const firstRow = firstRows[row.fsym][row.tsym]
+		price.change_pct = 1 - ((firstRow.close / row.close))
+		price.change_close = firstRow.close * price.change_pct
 		map[row.fsym][row.tsym].push(price)
 	});
 	return map;
@@ -146,7 +157,7 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 	const dayStart = new Date((new Date().setHours(0,0,0,0)))
 	const timeQuery = period ?
 		period === '1d' ? 
-		`and time >= ${escape.stringLit(dayStart.toISOString())}` : `and time > now() - ${period}`
+		`and time >= ${escape.stringLit(dayStart.toISOString())}` : `and time >= now() - ${period}`
 		:
 		`
 		and time >= ${escape.stringLit(start.toISOString())}
@@ -161,7 +172,8 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 		order by time asc
 	`;
 	let err;
-	const rows = await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e);
+	const rows = (await influx.query(query, { precision: Precision.Milliseconds }).catch(e=>err=e))
+		.filter(row => row.high); // temp hack for first value empty issue
 	if (err) {
 		throw err;
 	}
@@ -170,11 +182,14 @@ export const hist = async ({fsym, tsym, period='1d', interval, start=0, end=0, f
 			[tsym]: []
 		}
 	};
+	const firstRow = rows[0]
 	rows.forEach((row)=>{
 		let price = row
 		if (format === 'chart') {
 			price = formatChart(row)
 		}
+		price.change_pct = 1 - ((firstRow.close / row.close))
+		price.change_close = firstRow.close * price.change_pct
 		map[fsym][tsym].push(price)
 	});
 	return map;
@@ -191,7 +206,7 @@ export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, e
 	const dayStart = new Date((new Date().setHours(0,0,0,0)))
 	const timeQuery = period ?
 		period === '1d' ? 
-		`and time >= ${escape.stringLit(dayStart.toISOString())}` : `and time > now() - ${period}`
+		`and time >= ${escape.stringLit(dayStart.toISOString())}` : `and time >= now() - ${period}`
 		:
 		`
 		and time >= ${escape.stringLit(start.toISOString())}
@@ -212,10 +227,13 @@ export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, e
 		throw err;
 	}
 	const map = {};
+	const firstRows = {}
 	fsyms.forEach((fsym)=>{
 		map[fsym] = {}
+		firstRows[fsym] = {}
 		tsyms.forEach((tsym)=>{
 			map[fsym][tsym] = []
+			firstRows[fsym][tsym] = null
 		})
 	})
 	rows.filter(r=>r.close).forEach((row)=>{
@@ -223,7 +241,14 @@ export const histMulti = async ({fsyms, tsyms, period='1d', interval, start=0, e
 		if (format === 'chart') {
 			price = formatChart(row)
 		}
-		map[row.fsym][row.tsym].push(price);
+		if (!firstRows[row.fsym][row.tsym]) {
+			firstRows[row.fsym][row.tsym] = row
+		}
+		const firstRow = firstRows[row.fsym][row.tsym]
+		price.change_pct = 1 - ((firstRow.close / row.close))
+		price.change_close = firstRow.close * price.change_pct
+		map[row.fsym][row.tsym].push(price)
 	});
+	
 	return map;
 }
