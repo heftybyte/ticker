@@ -7,7 +7,7 @@ const formatChart = (price={}) =>({
 })
 
 const periodInterval = {
-	'1d': '5m',
+	'1d': '10m',
 	'1w': '1h',
 	'1m': '1d',
 	'3m': '1d',
