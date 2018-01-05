@@ -1,7 +1,7 @@
 import {} from 'dotenv/config'
 const express = require('express');
 const app = express();
-import { now, nowMulti, hist, histMulti } from './dao/price';
+import { now, nowMulti, hist, histMulti } from './services/price';
 
 app.get('/price/now', async (req, res)=>{
 	const { fsym, tsym } = req.query;
