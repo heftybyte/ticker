@@ -7,7 +7,7 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "start": "node .",
+    "start": "node server.js",
     "test": "",
     "coin": "babel-node lib/prices.js",
     "start-debug": "nodemon debug server.js --exec babel-node",
