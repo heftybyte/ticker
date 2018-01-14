@@ -12,7 +12,7 @@
     "coin": "babel-node lib/prices.js",
     "start-debug": "nodemon debug server.js --exec babel-node",
     "build": "babel . -d dist --ignore dist,node_modules --copy-files",
-    "start-dev": "babel-node server.js",
+    "start-dev": "babel-watch server.js",
     "posttest": "nsp check",
     "realtime": "node realtime.js",
     "historical": "node historical.js",

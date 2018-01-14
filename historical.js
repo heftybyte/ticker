@@ -28,7 +28,8 @@ export const periodInterval = {
 
 const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	let err;
-	const prices = await histFn[period](fsym, tsym).catch(e=>err=e);
+	// limit:60 is the past two months
+	const prices = await histFn[period](fsym, tsym, { limit: 60 }).catch(e=>err=e);
 	// process.exit(0)
 
 	if (err) {

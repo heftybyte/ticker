@@ -14,6 +14,11 @@ const periodInterval = {
 	'1y': '1d',
 	'all': '1d'
 }
+const intervalLength = {
+	'5m': 288,
+	'10m': 144,
+	'1h': 24
+}
 const periodMap = {
 	'1d': '1d',
 	'1w': '1w',
@@ -104,6 +109,15 @@ const recent = async ({fsym, tsym, period='1d', format='raw'}) => {
 	return map
 }
 
+const findNonZero = (collection, field, start, end) => {
+	for (let i = start; i < end; i++) {
+		const item = collection[i]
+		if (item[field]) {
+			return item
+		}
+	}
+}  
+
 const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 	period = periodMap[period]
 	const interval = interval || periodInterval[period] || '1d'
@@ -123,26 +137,32 @@ const recentMulti = async ({fsyms, tsyms, period='1d', format='raw'}) => {
 	}
 	const map = {};
 	const firstRows = {}
+	const lastPrice = {}
+	const rowsPerSymbol = intervalLength[interval]
 	fsyms.forEach((fsym)=>{
 		map[fsym] = {}
 		firstRows[fsym] = {}
+		lastPrice[fsym] = 0
 		tsyms.forEach((tsym)=>{
 			map[fsym][tsym] = []
 			firstRows[fsym][tsym] = null
 		})
 	})
-	rows.forEach((row)=>{
-		if (!row.close) return
-		let price = row
-		if (format === 'chart') {
-			price = formatChart(row)
-		}
+	rows.forEach((row, i)=>{
 		if (!firstRows[row.fsym][row.tsym]) {
-			firstRows[row.fsym][row.tsym] = row
+			firstRows[row.fsym][row.tsym] = row = row.close ?
+				row : findNonZero(rows, 'close', i, i + rowsPerSymbol) || row
 		}
+		if (!row.close) {
+			row = {...row, close: lastPrice[row.fsym]}
+		} else {
+			lastPrice[row.fsym] = row.close
+		}
+		const price = format === 'chart' ? formatChart(row) : { ...row }
 		const firstRow = firstRows[row.fsym][row.tsym]
 		price.change_pct = 1 - ((firstRow.close / row.close))
 		price.change_close = firstRow.close * price.change_pct
+	
 		map[row.fsym][row.tsym].push(price)
 	});
 	return map;
