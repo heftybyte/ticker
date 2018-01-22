@@ -26,10 +26,17 @@ export const periodInterval = {
 	'1h': 1800 * 1000	
 };
 
+const periodLimit = {
+	'1h': 168, // 1 week
+	'1m': 1440, // 1 day
+	'1d': 90 // 3 months
+}
+
 const storeHistoricalPrice = async({fsym, tsym, period='1d'}) => {
 	let err;
+	const limit = periodLimit[period]
 	// limit:60 is the past two months
-	const prices = await histFn[period](fsym, tsym, { limit: 60 }).catch(e=>err=e);
+	const prices = await histFn[period](fsym, tsym, { limit }).catch(e=>err=e);
 	// process.exit(0)
 
 	if (err) {
