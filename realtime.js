@@ -9,7 +9,6 @@ const pollDuration = process.env.POLL_DURATION || 30000;
 const storeCurrentPrices = async () => {
 	const prices = await getPrices();
 	// console.log('got prices', prices);
-
 	const points = prices.map(price=>({
 		measurement: 'ticker_prices',
 		tags: {
