@@ -20,7 +20,8 @@ const storeCurrentPrices = async () => {
 			price: price.price,
 			volume_24_hr: price.volume_24_hr,
 			change_pct_24_hr: price.change_pct_24_hr,
-			market_cap: price.market_cap
+			market_cap: price.market_cap,
+			supply: price.supply
 		},
 		timestamp: price.timestamp
 	}));
