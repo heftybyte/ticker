@@ -24,6 +24,7 @@
     "babel-runtime": "^6.26.0",
     "bluebird": "^3.5.1",
     "btoa": "^1.1.2",
+    "ccxt": "^1.11.69",
     "coinmarketcap": "^0.2.0",
     "cryptocompare": "^0.3.0",
     "dotenv": "^4.0.0",
@@ -35,7 +36,8 @@
     "node-fetch": "^1.7.3",
     "query-string": "^5.0.1",
     "request": "^2.83.0",
-    "request-promise": "^4.2.2"
+    "request-promise": "^4.2.2",
+    "socket.io": "^2.0.4"
   },
   "devDependencies": {
     "async": "^2.6.0",
