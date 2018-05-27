@@ -99,8 +99,8 @@ const storeHistoricalPrices = async (period='1d', fsyms=FSYMS, tsyms=TSYMS) =>{
 	}
 }
 const period = process.argv[2] || '1d';
-const fsyms = process.argv[3] ? process.argv[3].split(',') : FSYMS;
-const tsyms = process.argv[4] ? process.argv[4].split(',') : TSYMS;
+const tsyms = process.argv[3] ? process.argv[3].split(',') : TSYMS;
+const fsyms = process.argv[4] ? process.argv[4].split(',') : FSYMS;
 const interval = periodInterval[period];
 
 console.log('fetching historical price data for', {period, interval, fsyms, tsyms});
